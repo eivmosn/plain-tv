@@ -273,7 +273,7 @@ final class HomeSettings {
             b.setOnFocusChangeListener((v,focus)->{GradientDrawable d=new GradientDrawable();d.setColor(focus?0x66F5F4EF:0x26F5F4EF);d.setCornerRadius(a.dp(14));v.setBackground(d);});}
         LinearLayout.LayoutParams bl=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,a.dp(46));bl.leftMargin=a.dp(12);
         buttons.addView(cancel,bl);buttons.addView(save,new LinearLayout.LayoutParams(bl));
-        panel.addView(buttons,new LinearLayout.LayoutParams(-1,FrameLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams buttonsLp=new LinearLayout.LayoutParams(-1,LinearLayout.LayoutParams.WRAP_CONTENT);buttonsLp.topMargin=a.dp(22);panel.addView(buttons,buttonsLp);
         cancel.setOnClickListener(v->dialog.dismiss());
         save.setOnClickListener(v->{String value=input.getText().toString().trim();if(value.isEmpty()){a.message("名称不能为空");return;}
             if(a.items.rename(id,value)){homeFocusId=id;homeFocusAction=2;a.refreshHome();dialog.dismiss();render();}else a.message("保存失败");});
