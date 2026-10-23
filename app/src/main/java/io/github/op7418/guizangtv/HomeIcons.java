@@ -16,7 +16,7 @@ final class HomeIcons {
             case "com.tcl.cyberui":resource=R.drawable.mark_house;break;
             case "com.tcl.settings":resource=R.drawable.mark_gear_six;break;
             case "com.tcl.tv":resource=R.drawable.mark_monitor_play;break;
-            case "control:appearance":resource=R.drawable.mark_paint_brush_household;break;
+            case "control:appearance":resource=R.drawable.mark_palette_fill;break;
             case "control:settings":resource=R.drawable.mark_gear_six;break;
             case "control:inputs":resource=R.drawable.mark_monitor_play;break;
             case "control:apps":resource=R.drawable.mark_squares_four;break;

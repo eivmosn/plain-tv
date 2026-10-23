@@ -9,13 +9,13 @@ import java.util.*;
 /** Stable app/source identities; removing an entry never uninstalls an app. */
 final class HomeItems {
     static final String[] DEFAULTS = {"hdmi:1", "tv:live", "com.xiaodianshi.tv.yst",
-            "com.tcl.ui_mediaCenter", "com.tcl.cyberui", "com.tcl.settings"};
+            "com.tcl.ui_mediaCenter", "com.tcl.cyberui"};
     final Context context;
     final LinkedHashMap<String,String> names = new LinkedHashMap<>();
     final List<String> order = new ArrayList<>();
     HomeItems(Context c) {
         context = c;
-        String[] labels = {"PlayStation 5", "直播电视", "哔哩哔哩", "媒体中心", "TCL 原桌面", "TCL 设置"};
+        String[] labels = {"PlayStation 5", "直播电视", "哔哩哔哩", "媒体中心", "TCL 原桌面"};
         for (int i=0;i<DEFAULTS.length;i++) names.put(DEFAULTS[i], labels[i]);
         discover();
         try {
@@ -25,6 +25,7 @@ final class HomeItems {
                 if (validId(id) && !order.contains(id)) order.add(id);
             }
         } catch (Exception ignored) { order.clear(); }
+        order.remove("com.tcl.settings");
         if (order.isEmpty()) order.addAll(Arrays.asList(DEFAULTS));
     }
     void discover() {

@@ -33,3 +33,6 @@ inspect/
 patch_*.py
 build-baseline.*
 
+
+tmp_patch_*.py
+

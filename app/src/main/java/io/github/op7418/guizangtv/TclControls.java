@@ -48,7 +48,18 @@ final class TclControls {
      * to tune an input. The user picks the port with the same D-pad flow as TCL's own home.
      */
     static boolean openHdmi(Context context, int port) {
-        return showInputs(context);
+        if (port < 1 || port > 4) return false;
+        try {
+            Intent intent = new Intent("android.intent.action.TV")
+                    .setComponent(new ComponentName("com.tcl.tv", "com.tcl.tv.TVActivity"))
+                    .putExtra("targetSourceId", 7 + port)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return true;
+        } catch (RuntimeException unavailable) {
+            Log.w(TAG, "HDMI" + port + " unavailable", unavailable);
+            return false;
+        }
     }
 
     private static boolean showWindow(Context context, String action) {
