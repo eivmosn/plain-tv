@@ -18,7 +18,6 @@ public final class FrameHomeActivity extends Activity implements HomeSurface.Act
     FrameWallpapers wallpapers;
     HomeSettings settings;
     HomeWeather weather;
-    HomeAssistant assistant;
     HomeSurface surface;
     private FrameLayout root;
     private ImageView photo, transition;
@@ -42,7 +41,6 @@ public final class FrameHomeActivity extends Activity implements HomeSurface.Act
         wallpapers=new FrameWallpapers(this,photo,transition);
         weather=new HomeWeather(this,this::weatherChanged);
         settings=new HomeSettings(this);
-        assistant=new HomeAssistant(this);
         wallpapers.changed=()->{if(surface!=null)surface.wallpaper(wallpaperDrawable());};
         setContentView(root);refreshHome();surface.focusApp();
     }
@@ -62,23 +60,26 @@ public final class FrameHomeActivity extends Activity implements HomeSurface.Act
     HomeSurface preview(){HomeSurface view=new HomeSurface(this,appearance,items,wallpaperDrawable(),selected,true,this);view.weather(weather.current());return view;}
     void weatherChanged(){if(surface!=null)surface.weather(weather.current());if(settings!=null)settings.weatherChanged();}
     Drawable wallpaperDrawable(){return photo.getDrawable();}
-    void updateRotation(){if(weather!=null)weather.active(resumed&&!settings.showing()&&(assistant==null||!assistant.showing())&&(library==null||!library.isShowing()));if(resumed&&appearance.get("background")==0&&!settings.showing()&&(assistant==null||!assistant.showing())&&(library==null||!library.isShowing()))wallpapers.resume();else wallpapers.pause();}
+    void updateRotation(){if(weather!=null)weather.active(resumed&&!settings.showing()&&(library==null||!library.isShowing()));if(resumed&&appearance.get("background")==0&&!settings.showing()&&(library==null||!library.isShowing()))wallpapers.resume();else wallpapers.pause();}
+    @Override public void launcherSettings(){settings.show();}
     @Override public void selected(int index){selected=index;getSharedPreferences("frame-home",0).edit().putInt("selected",index).apply();}
     @Override public void open(String id){
-        if(id.startsWith("hdmi:")){if(!XiaomiControls.openHdmi(this,Integer.parseInt(id.substring(5))))message("暂时无法切换信号源");return;}
-        if("com.mitv.tvhome".equals(id)){stockHome();return;}
+        if(id.startsWith("hdmi:")){if(!TclControls.openHdmi(this,Integer.parseInt(id.substring(5))))message("暂时无法打开信号源");return;}
+        if("tv:live".equals(id)){if(!TclControls.openLiveTv(this))message("暂时无法打开直播电视");return;}
+        if("com.tcl.cyberui".equals(id)){stockHome();return;}
+        if("com.tcl.settings".equals(id)){systemSettings();return;}
         Intent intent=getPackageManager().getLeanbackLaunchIntentForPackage(id);
         if(intent==null)intent=getPackageManager().getLaunchIntentForPackage(id);
         launch(intent,"应用暂时不可用");
     }
     @Override public void control(int index){
-        if(index==0)showLibrary();
-        else if(index==1){if(!XiaomiControls.showInputs(this))message("暂时无法打开信号源");}
-        else if(index==2)settings.show();
-        else if(index==3&&HomeAssistant.enabled(this))assistant.show();
+        if(index==0){if(!TclControls.showInputs(this))message("暂时无法打开信号源");}
+        else if(index==1)systemSettings();
+        else if(index==2)showLibrary();
+        else if(index==3)settings.show();
     }
-    void stockHome(){if(!XiaomiControls.startStockHome(this,new ComponentName("com.mitv.tvhome","com.mitv.tvhome.MainActivity")))message("暂时无法打开小米原桌面");}
-    void systemSettings(){Intent i=XiaomiControls.settings(this,Settings.ACTION_SETTINGS);if(i==null)i=new Intent(Settings.ACTION_SETTINGS);launch(i,"暂时无法打开设置");}
+    void stockHome(){if(!TclControls.startStockHome(this,new ComponentName("com.tcl.cyberui","com.tcl.cyberui.MainActivity")))message("暂时无法打开 TCL 原桌面");}
+    void systemSettings(){if(!TclControls.showSettings(this))message("暂时无法打开 TCL 设置");}
     private void launch(Intent i,String error){if(i==null){message(error);return;}try{startActivity(i);}catch(RuntimeException unavailable){message(error);}}
     private void showLibrary(){
         items.discover();List<String> ids=new ArrayList<>(items.names.keySet());ids.removeIf(id->id.startsWith("hdmi:") || (getPackageManager().getLeanbackLaunchIntentForPackage(id)==null && getPackageManager().getLaunchIntentForPackage(id)==null));
@@ -87,11 +88,11 @@ public final class FrameHomeActivity extends Activity implements HomeSurface.Act
         library=new AlertDialog.Builder(this).setTitle("全部应用").setItems(labels,(d,i)->open(ids.get(i))).setNegativeButton("返回",null).create();
         library.setOnDismissListener(d->{surface.controls.get(0).requestFocus();updateRotation();});library.show();updateRotation();
     }
-    @Override protected void onResume(){super.onResume();resumed=true;assistant.active(true);BootStart.confirm(this);handler.removeCallbacks(tick);tick.run();updateRotation();}
+    @Override protected void onResume(){super.onResume();resumed=true;BootStart.confirm(this);handler.removeCallbacks(tick);tick.run();updateRotation();}
     @Override protected void onNewIntent(Intent i){super.onNewIntent(i);setIntent(i);}
-    @Override protected void onPause(){resumed=false;assistant.active(false);weather.active(false);handler.removeCallbacks(tick);wallpapers.pause();if(library!=null)library.dismiss();super.onPause();}
-    @Override protected void onDestroy(){assistant.destroy();settings.close();weather.destroy();wallpapers.destroy();handler.removeCallbacksAndMessages(null);super.onDestroy();}
-    @Override public void onBackPressed(){if(surface.controls.contains(getCurrentFocus()))surface.focusApp();else if(XiaomiControls.enabled())stockHome();else super.onBackPressed();}
+    @Override protected void onPause(){resumed=false;weather.active(false);handler.removeCallbacks(tick);wallpapers.pause();if(library!=null)library.dismiss();super.onPause();}
+    @Override protected void onDestroy(){settings.close();weather.destroy();wallpapers.destroy();handler.removeCallbacksAndMessages(null);super.onDestroy();}
+    @Override public void onBackPressed(){if(surface.controls.contains(getCurrentFocus()))surface.focusApp();else if(TclControls.enabled())stockHome();else super.onBackPressed();}
     @Override public void dump(String prefix,java.io.FileDescriptor fd,java.io.PrintWriter out,String[] args){
         super.dump(prefix,fd,out,args);wallpapers.dump(out);BootStart.dump(this,out);weather.dump(out);
         out.println("HomeAppearance: "+appearance.prefs.getAll()+" items="+items.order+" settings="+settings.page());

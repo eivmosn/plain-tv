@@ -8,13 +8,15 @@ final class HomeIcons {
     static Drawable get(Context context,String id,int color){
         int resource;
         switch(id){
-            case "hdmi:2":resource=R.drawable.mark_playstation;break;
-            case "hdmi:1":resource=R.drawable.mark_appletv;break;
+            case "hdmi:1":resource=R.drawable.mark_playstation;break;
+            case "hdmi:2":resource=R.drawable.mark_monitor_play;break;
+            case "tv:live":resource=R.drawable.mark_monitor_play;break;
             case "com.xiaodianshi.tv.yst":resource=R.drawable.mark_bilibili;break;
-            case "com.xiaomi.mitv.smartshare":resource=R.drawable.mark_broadcast;break;
-            case "com.mitv.gallery":resource=R.drawable.mark_image;break;
-            case "com.mitv.tvhome":resource=R.drawable.mark_house;break;
-            case "control:assistant":resource=R.drawable.mark_chat_circle_dots;break;
+            case "com.tcl.ui_mediaCenter":resource=R.drawable.mark_image;break;
+            case "com.tcl.cyberui":resource=R.drawable.mark_house;break;
+            case "com.tcl.settings":resource=R.drawable.mark_gear_six;break;
+            case "com.tcl.tv":resource=R.drawable.mark_monitor_play;break;
+            case "control:appearance":resource=R.drawable.mark_paint_brush_household;break;
             case "control:settings":resource=R.drawable.mark_gear_six;break;
             case "control:inputs":resource=R.drawable.mark_monitor_play;break;
             case "control:apps":resource=R.drawable.mark_squares_four;break;

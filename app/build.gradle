@@ -4,11 +4,11 @@ android {
     namespace 'io.github.op7418.guizangtv'
     compileSdk 34
     defaultConfig {
-        applicationId 'io.github.op7418.guizangtv'
+        applicationId 'io.github.eivmosn.plaintv'
         minSdk 26
         targetSdk 34
-        versionCode 6
-        versionName '0.4.0-dev'
+        versionCode 12
+        versionName '0.1.11-tcl'
     }
     signingConfigs {
         release {
@@ -34,3 +34,13 @@ android {
     }
 }
 dependencies { testImplementation 'junit:junit:4.13.2' }
+
+
+
+
+
+
+
+
+
+

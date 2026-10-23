@@ -23,7 +23,7 @@ public final class BootStart {
     }
     static void enter(Activity a) {
         int boot = bootCount(a);
-        String reason = BootStartPolicy.skipReason(XiaomiControls.enabled(), enabled(a), boot, prefs(a).getInt("attempted", -1),
+        String reason = BootStartPolicy.skipReason(TclControls.bootSupported(), enabled(a), boot, prefs(a).getInt("attempted", -1),
                 SystemClock.elapsedRealtime());
         if (reason != null) { Log.i("GuiZangBoot", reason); return; }
         if (!prefs(a).edit().putInt("attempted", boot).putString("status", "系统已调用启动入口，等待界面确认").commit()) return;
@@ -59,9 +59,9 @@ public final class BootStart {
                 .setNegativeButton("返回", null).show();
     }
     static void show(Activity a) {
-        if (!XiaomiControls.enabled()) {
-            new AlertDialog.Builder(a).setTitle("开机自动进入（实验）")
-                    .setMessage("目前仅适配 MiTV-MTSU0。其他机型请先使用普通应用入口。")
+        if (!TclControls.bootSupported()) {
+            new AlertDialog.Builder(a).setTitle("开机自动进入（TCL 暂未开放）")
+                    .setMessage("TCL 版暂未接入开机自启。请先从应用列表打开 Plain TV；默认桌面接管后续再测试。")
                     .setNegativeButton("返回", null).show();
             return;
         }

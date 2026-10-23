@@ -5,9 +5,11 @@
     <queries>
         <intent><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent>
         <intent><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LEANBACK_LAUNCHER" /></intent>
-        <package android:name="com.xiaomi.mitv.settings" />
-        <package android:name="com.xiaomi.mitv.tvplayer" />
-        <package android:name="com.mitv.tvhome" />
+        <package android:name="com.tcl.settings" />
+        <package android:name="com.tcl.tv" />
+        <package android:name="com.tcl.cyberui" />
+        <package android:name="com.tcl.ui_mediaCenter" />
+        <package android:name="com.tcl.MultiScreenInteraction_TV" />
     </queries>
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher"
         android:banner="@drawable/banner" android:theme="@style/Theme.GuiZangTV"
@@ -19,23 +21,8 @@
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <!-- Xiaomi's package-based startup hook resolves INFO before LAUNCHER.
-             Ordinary TV app-list entries still open FrameHomeActivity directly. -->
-        <activity android:name=".BootGateActivity" android:exported="true"
-            android:excludeFromRecents="true" android:noHistory="true" android:taskAffinity=""
-            android:theme="@android:style/Theme.NoDisplay">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.INFO" />
             </intent-filter>
         </activity>
     </application>

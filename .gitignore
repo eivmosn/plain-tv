@@ -27,3 +27,9 @@ app/src/main/assets/wallpapers/*
 # Companion pairing material must stay outside source control.
 tv-pairing.txt
 companion-state/
+
+# Local inspection artifacts (APKs, decoded smali, screenshots, logs)
+inspect/
+patch_*.py
+build-baseline.*
+

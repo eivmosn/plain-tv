@@ -11,7 +11,7 @@ import java.util.*;
 
 /** The same native home layout is used for the live home and Settings preview. */
 final class HomeSurface extends FrameLayout {
-    interface Actions { void open(String id); void control(int index); void selected(int index); }
+    interface Actions { void open(String id); void control(int index); void launcherSettings(); void selected(int index); }
     final List<View> apps = new ArrayList<>(), controls = new ArrayList<>();
     final ImageView previewPhoto;
     final TextView clock;
@@ -85,8 +85,8 @@ final class HomeSurface extends FrameLayout {
         LayoutParams cp=new LayoutParams(-2,dp(45),Gravity.TOP|(dock?Gravity.START:Gravity.END));cp.topMargin=dp(45);cp.rightMargin=dp(64);if(dock)cp.leftMargin=dp(60);addView(timeRow,cp);
         LinearLayout side=new LinearLayout(c);side.setOrientation(dock?LinearLayout.HORIZONTAL:LinearLayout.VERTICAL);side.setGravity(Gravity.END);
         LayoutParams sp=new LayoutParams(dock?-2:dp(180),-2,(dock?Gravity.TOP:Gravity.BOTTOM)|Gravity.END);sp.rightMargin=dp(64);sp.bottomMargin=dp(46);if(dock)sp.topMargin=dp(45);addView(side,sp);
-        String[] names={"全部应用","其他信号源","设置","Codex"};String[] ids={"apps","inputs","settings","assistant"};
-        for(int i=0;i<(HomeAssistant.enabled(c)?names.length:names.length-1);i++){
+        String[] names={"信号源","系统设置","全部应用","桌面设置"};String[] ids={"inputs","settings","apps","appearance"};
+        for(int i=0;i<names.length;i++){
             final int index=i;LinearLayout line=new LinearLayout(c);line.setGravity(Gravity.END|Gravity.CENTER_VERTICAL);
             TextView label=text(names[i],16);label.setTypeface(style.typeface());int mode=style.get("controls");
             line.addView(label,new LinearLayout.LayoutParams(-2,-2));
