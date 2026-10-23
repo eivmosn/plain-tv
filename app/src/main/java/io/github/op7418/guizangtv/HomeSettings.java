@@ -247,13 +247,39 @@ final class HomeSettings {
         options.addView(row,new LinearLayout.LayoutParams(-1,a.dp(52)));
     }
     private void editName(String id){
-        EditText input=new EditText(a);input.setText(a.items.name(id));input.setSingleLine(true);input.setSelectAllOnFocus(true);input.setTextSize(18);input.setPadding(a.dp(14),0,a.dp(14),0);
-        AlertDialog dialog=new AlertDialog.Builder(a).setTitle("编辑名称").setView(input).setPositiveButton("保存",null).setNegativeButton("取消",null).create();
-        dialog.setOnShowListener(d->{input.requestFocus();dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
-                String value=input.getText().toString().trim();if(value.isEmpty()){a.message("名称不能为空");return;}
-                if(a.items.rename(id,value)){homeFocusId=id;homeFocusAction=2;a.refreshHome();dialog.dismiss();render();}else a.message("保存失败");
-            });});
+        Dialog dialog=new Dialog(a){@Override public void onBackPressed(){dismiss();}};
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        WindowManager.LayoutParams win=dialog.getWindow().getAttributes();win.dimAmount=0.65f;dialog.getWindow().setAttributes(win);
+        FrameLayout root=new FrameLayout(a);
+        ImageView bg=new ImageView(a);bg.setScaleType(ImageView.ScaleType.CENTER_CROP);bg.setAlpha(0.55f);
+        root.addView(bg,new FrameLayout.LayoutParams(-1,-1));
+        WallpaperMaterial.request(a.wallpaperDrawable(),42,image->{if(image!=null)bg.setImageBitmap(image);});
+        View veil=new View(a);veil.setBackgroundColor(0x99000000);root.addView(veil,new FrameLayout.LayoutParams(-1,-1));
+        LinearLayout panel=new LinearLayout(a);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(a.dp(34),a.dp(28),a.dp(34),a.dp(24));
+        GradientDrawable glass=new GradientDrawable();glass.setColor(0xE61A1E23);glass.setCornerRadius(a.dp(24));panel.setBackground(glass);
+        FrameLayout.LayoutParams panelLp=new FrameLayout.LayoutParams(a.dp(680),FrameLayout.LayoutParams.WRAP_CONTENT,Gravity.CENTER);root.addView(panel,panelLp);
+        TextView title=label("编辑名称",28);title.setTextColor(0xF2FFFFFF);panel.addView(title,new LinearLayout.LayoutParams(-1,a.dp(52)));
+        EditText input=new EditText(a);input.setText(a.items.name(id));input.setSingleLine(true);input.setSelectAllOnFocus(true);input.setTextSize(20);
+        input.setTextColor(0xF2FFFFFF);input.setHintTextColor(0x80FFFFFF);input.setPadding(a.dp(18),0,a.dp(18),0);
+        GradientDrawable field=new GradientDrawable();field.setColor(0x33F5F4EF);field.setCornerRadius(a.dp(14));input.setBackground(field);
+        input.setOnFocusChangeListener((v,focus)->{GradientDrawable d=new GradientDrawable();d.setColor(focus?0x55F5F4EF:0x33F5F4EF);d.setCornerRadius(a.dp(14));v.setBackground(d);});
+        panel.addView(input,new LinearLayout.LayoutParams(-1,a.dp(58)));
+        LinearLayout buttons=new LinearLayout(a);buttons.setOrientation(LinearLayout.HORIZONTAL);buttons.setGravity(Gravity.END);
+        TextView cancel=label("取消",17),save=label("保存",17);
+        for(TextView b:new TextView[]{cancel,save}){b.setGravity(Gravity.CENTER);b.setPadding(a.dp(24),0,a.dp(24),0);b.setFocusable(true);b.setFocusableInTouchMode(true);b.setClickable(true);
+            GradientDrawable base=new GradientDrawable();base.setColor(b==save?0x55F5F4EF:0x26F5F4EF);base.setCornerRadius(a.dp(14));b.setBackground(base);
+            b.setOnFocusChangeListener((v,focus)->{GradientDrawable d=new GradientDrawable();d.setColor(focus?0x66F5F4EF:0x26F5F4EF);d.setCornerRadius(a.dp(14));v.setBackground(d);});}
+        LinearLayout.LayoutParams bl=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,a.dp(46));bl.leftMargin=a.dp(12);
+        buttons.addView(cancel,bl);buttons.addView(save,new LinearLayout.LayoutParams(bl));
+        panel.addView(buttons,new LinearLayout.LayoutParams(-1,FrameLayout.LayoutParams.WRAP_CONTENT));
+        cancel.setOnClickListener(v->dialog.dismiss());
+        save.setOnClickListener(v->{String value=input.getText().toString().trim();if(value.isEmpty()){a.message("名称不能为空");return;}
+            if(a.items.rename(id,value)){homeFocusId=id;homeFocusAction=2;a.refreshHome();dialog.dismiss();render();}else a.message("保存失败");});
+        dialog.setOnShowListener(d->{input.requestFocus();input.setSelection(input.getText().length());dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);});
+        dialog.setContentView(root);
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.MATCH_PARENT);
         dialog.show();
     }
     private ImageView action(int res,int tint,Runnable run,boolean enabled){
